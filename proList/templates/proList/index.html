@@ -1,0 +1,162 @@
+{% extends 'proList/layout.html' %}
+{% load static %}
+{% block title %}
+    BETTER DO
+{% endblock %}
+{% block body %}
+
+<div id="top">
+    <div id="apptitle">BETTER DO</div>
+    <div id="userpanel">
+        {% if user.is_authenticated %}
+            <p id="username">{{user.username}}</p>
+            <a class="btn btn-info btn-sm" href="{% url 'logout' %}">Log Out</a>
+            <br>
+        {% endif %}
+    </div>
+</div>
+<hr>
+<button class="btn btn-success" id="newReminderButton">Add to TODO list</button>
+<button class="btn btn-success" id="newTaskButton">Start a new Task</button>
+
+<div class="myforms" id="newTaskForm" style="display: none;">
+    <form action="{% url 'newtask' %}" method="post">
+        {% csrf_token %}
+        <input class="form-control" name="task" placeholder="New Task" required type="text">
+        <input class="form-control" name="group" placeholder="Group (Optional)" type="text">
+        <input class="btn btn-outline-success btn-sm" type="submit" value="Start new task">
+    </form>
+</div>
+
+<div class="myforms" id="newReminderForm" style="display:none">
+    <form action="{% url 'addreminder' %}" method="post">
+        {% csrf_token %}
+        <input class="form-control" name="new_reminder" placeholder="I have to - " required type="text">
+        <input class="btn btn-outline-success btn-sm" type="submit" value="Add TODO">
+    </form>
+</div>
+
+<p class="tableheads">TO DO</p>
+
+<table class="table table-striped">
+    {% for reminder in reminders %}
+        <tr>
+            <td>{{reminder.reminder}}</td>
+            <td>
+                <form action="{% url 'endreminder' %}" method="post">
+                    {% csrf_token %}
+                    <input name="reminder_id" type="hidden" value="{{reminder.id}}">
+                    <input class="btn btn-outline-primary btn-sm" type="submit" value="Done">
+                </form> 
+        </td>
+        </tr>
+    {% endfor %}
+</table>
+
+<p class="tableheads">ACTIVE TASKS</p>
+
+<table class="table table-striped">
+    <thead>
+        <th>Task</th>
+        <th>Started</th>
+        <th>Duration</th>
+        <th></th>
+    </thead>
+    <tbody id="currentTasksTable">
+        {% for task in current_tasks %}
+            <tr>
+                <td>{{task.task}}</td>
+                <td>{{task.start_time}}</td>
+                <td>{{task.duration}}</td>
+                <td>
+                    <form id="buttonid{{task.id}}" onSubmit="displayTaskForm({{task.id}});return false">
+                        <input class="btn btn-outline-success btn-sm" type="submit" value="Finish">
+                    </form>
+                    <div class="finishTaskForm" id="task{{task.id}}" style="display:none">
+                        Are you sure want to end this task?
+                        <form action="{% url 'endtask' %}" method="post">
+                            {% csrf_token %}
+                            <input name="task_id" type="hidden" value="{{task.id}}">
+			                <textarea class="form-control" name="remark" placeholder="Remarks, if any" rows="2" col="20" style="font-family:arial"></textarea>
+                            <input class="btn btn-outline-success btn-sm" type="submit" value="Yes">
+                            <button class="btn btn-outline-danger btn-sm" id="rejectButton{{task.id}}" onClick="rejectConfirmation({{task.id}});return false">No</button>
+                        </form> 
+                    </div>
+                </td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<p class="tableheads">COMPLETED TASKS</p>
+<div id="groupbuttons">
+    <div>
+        <div class="mybtn">
+            <form id="ALLform">
+                {% csrf_token %}
+                <input type="hidden" name="groupname" value="ALL">
+                <input class="btn btn-success btn-sm" type="button" onclick=getGroup("ALL"); value="ALL">
+            </form>
+        </div>
+
+        {% for i in groups %}
+            {% if i is not None and i != "" %}
+            <div class="mybtn">
+            <form id="{{i}}form">
+                {% csrf_token %}
+                <input type="hidden" name="groupname" value="{{i}}">
+                <input class="btn btn-info btn-sm" type="button" onclick=getGroup("{{i}}"); value="{{i}}">
+            </form>
+            </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+    
+    <div style="text-align: right;">
+        <form action="{% url 'export' %}" method="post">
+            {% csrf_token %}
+            <input id="exportData" name="groupname" type="hidden" value="ALL">
+            <input class="btn btn-danger btn-sm" type="submit" value="Export">
+        </form>
+    </div>
+</div>
+<table class="table table-striped">
+    <thead>
+        <th>Task</th>
+        <th>Started</th>
+        <th>Finished</th>
+        <th>Duration</th>
+        <th>Remark</th>
+    </thead>
+    <tbody id="completedTasksTable">
+            {% for task in completed_tasks %}
+            <tr>
+                <td>{{task.task}}</td>
+                <td>{{task.start_time}}</td>
+                <td>{{task.end_time}}</td>
+                <td>{{task.duration}}</td>
+                <td>{{task.remark}}</td>
+            </tr>
+            {% endfor %}
+    </tbody>
+</table>
+
+<div id="pagination">
+    {% for i in page_obj.page_range %}
+    <div class="mybtn">    
+        <form action="{% url 'index' %}" method="post">
+            {% csrf_token %}
+            <input name="page" type="hidden" value="{{i}}">
+            {% if i|slugify == curr_page %}
+            <input class="btn btn-outline-secondary btn-sm" type="submit" value="{{i}}">
+            {% else %}
+            <input class="btn btn-outline-success btn-sm" type="submit" value="{{i}}">
+            {% endif %}
+        </form>
+    </div>
+    {% endfor %}
+</div>
+
+<script src="{% static 'proList/index.js' %}"></script>
+
+{% endblock %}

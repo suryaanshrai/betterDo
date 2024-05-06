@@ -1,0 +1,22 @@
+{% extends 'proList/layout.html' %}
+{% load static %}
+{% block title %}
+    Register
+{% endblock %}
+{% block body %}
+<div id="apptitle2">BETTER DO</div>
+<div style="margin:10px">
+    <p id="messagebox">{{message}}</p>
+    <form action="{% url 'register' %}" method="post">
+        {% csrf_token %}
+        <input class="form-control" autofocus id="usernamebox" name="username" placeholder="Username" type="text">
+        <input class="form-control" name="email" placeholder="Email Address" type="email">
+        <input class="form-control" name="password" placeholder="Password" type="password">
+        <input class="form-control" name="confirmation" placeholder="Confirm Password" type="password">
+        <input class="btn btn-primary" type="submit" value="Register">
+    </form>
+    <button class="btn btn-danger" id="usernameSuggestor">Suggest Username</button>
+    <p>Already have an account?</p> <a href="{% url 'login' %}">Log In here.</a>
+    <script src="{% static 'proList/register.js' %}"></script>
+</div>
+{% endblock %}

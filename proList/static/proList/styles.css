@@ -1,0 +1,56 @@
+.mybtn {
+    display: inline-block;
+}
+
+.myforms * {
+    margin: .5cm;
+}
+
+.tableheads {
+    font-family:cursive;
+    font-size: large;
+    margin:1cm;
+    text-align: center;
+}
+
+#pagination {
+    text-align: center;
+    margin:10px;
+}
+
+#apptitle {
+    font-family: cursive;
+    font-size: 1.25cm;
+    padding:1cm;
+    padding-bottom: 0;
+    text-align: right;
+}
+
+#apptitle2 {
+    font-family: cursive;
+    font-size: 1.25cm;
+    padding:1cm;
+    padding-bottom: 0;
+    text-align: center;
+}
+
+#userpanel {
+    text-align: right;
+    margin:15px;
+}
+
+#username {
+    font-weight: bold;
+}
+
+#top {
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+
+#groupbuttons {
+    display: grid;
+    grid-template-columns: 75% 20%;
+    margin-left: 20px;
+    margin-bottom: 10px;
+}

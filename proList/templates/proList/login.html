@@ -1,0 +1,19 @@
+{% extends 'proList/layout.html' %}
+{% load static %}
+{% block title %}
+    Login
+{% endblock %}
+{% block body %}
+<div id="apptitle2">BETTER DO</div>
+<div style="margin:10px">
+    {{message}}
+    <form action="{% url 'login' %}" method="post">
+        {% csrf_token %}
+        <input autofocus class="form-control" name="username" placeholder="Username" type="text">
+        <input class="form-control" name="password" placeholder="Password" type="password">
+        <input class="btn btn-primary" type="submit" value="Login">
+    </form>
+    <p>Not Registered Yet?</p>
+    <a href="{% url 'register' %}">Register Here</a>
+</div>
+{% endblock %}
